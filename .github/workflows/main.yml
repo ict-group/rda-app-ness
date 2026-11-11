@@ -50,8 +50,8 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Splash Screens and Icons
-        run: npx capacitor-assets generate
+      #- name: Splash Screens and Icons
+      # run: npx capacitor-assets generate
 
       - name: Build Ionic App
         run: ionic build --release --prod
