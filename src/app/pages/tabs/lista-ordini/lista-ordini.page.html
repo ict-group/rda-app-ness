@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Lista Ordini</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="lista-bg">
+  <div class="list-wrapper">
+    @for (ordine of listaOrdinata; track ordine.id) {
+      <div class="request-card slim-home">
+        <div class="side-indicator" [class]="sideClass(ordine.stato)"></div>
+        <div class="card-content-compact">
+          <div class="top-meta">
+            <span class="date-text">Ordine: {{ ordine.dataOrdine | date: 'dd/MM/yyyy' }}</span>
+            <span class="amount-badge">{{ ordine.fornitore }}</span>
+          </div>
+          <div class="main-info">
+            <p class="req-title-small">Consegna: {{ ordine.dataConsegna | date: 'dd/MM/yyyy' }}</p>
+          </div>
+          <p class="req-status-mini" [class]="statusClass(ordine.stato)">{{ statusLabel(ordine.stato) }}</p>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <ion-icon name="cart-outline"></ion-icon>
+        <h3>Nessun ordine</h3>
+        <p>Non ci sono ordini collegati</p>
+      </div>
+    }
+  </div>
+</ion-content>

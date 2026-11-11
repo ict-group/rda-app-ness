@@ -1,0 +1,122 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Lista Richieste</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="lista-bg">
+  <ion-refresher slot="fixed" (ionRefresh)="aggiorna($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-segment
+    mode="ios"
+    [value]="filtro()"
+    (ionChange)="filtro.set($any($event.detail.value))"
+    class="tab-filtro-richieste"
+  >
+    <ion-segment-button value="tutti">
+      <ion-label>Tutti</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="rda">
+      <ion-label>RDA</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="rds">
+      <ion-label>RDS</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="list-wrapper">
+    @if (isCaricandoPrimaVolta()) {
+      @for (n of [1, 2, 3, 4]; track n) {
+        <div class="request-card slim-home skeleton-card">
+          <div class="side-indicator"></div>
+          <div class="card-content-compact">
+            <ion-skeleton-text animated class="sk-top-meta"></ion-skeleton-text>
+            <ion-skeleton-text animated class="sk-title-req"></ion-skeleton-text>
+            <ion-skeleton-text animated class="sk-dates-row"></ion-skeleton-text>
+            <ion-skeleton-text animated class="sk-status"></ion-skeleton-text>
+          </div>
+        </div>
+      }
+    } @else {
+    @for (richiesta of richiesteFiltrate(); track (richiesta.tipo === 'rda' ? richiesta.rda.id : richiesta.rds.id)) {
+      @if (richiesta.tipo === 'rda') {
+        <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rda', richiesta.rda.id]">
+          <div class="side-indicator" [class]="sideClass(richiesta.rda.stato)"></div>
+          <div class="card-content-compact">
+            <div class="top-meta">
+              <span class="tipo-badge tipo-rda">RDA</span>
+              <span class="amount-badge">{{ richiesta.rda.importo }} €</span>
+            </div>
+            <div class="main-info">
+              <p class="req-title-small">{{ richiesta.rda.descrizione }}</p>
+            </div>
+            <div class="dates-row">
+              <div class="date-item">
+                <span class="date-item-label">Consegna</span>
+                <span class="date-item-value">{{ richiesta.rda.data | date: 'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="date-item">
+                <span class="date-item-label">Creata il</span>
+                <span class="date-item-value">{{ richiesta.rda.dataCreazione | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            <p class="req-status-mini" [class]="statusClass(richiesta.rda.stato)">
+              {{ statusLabel(richiesta.rda.stato) }}
+            </p>
+            <a
+              class="link-ordini"
+              [routerLink]="['/tabs/lista-ordini']"
+              [queryParams]="{ rdaId: richiesta.rda.id }"
+              (click)="$event.stopPropagation()"
+            >
+              Vedi ordini collegati
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </a>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon-small"></ion-icon>
+        </div>
+      } @else {
+        <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rds', richiesta.rds.id]">
+          <div class="side-indicator" [class]="sideClass(richiesta.rds.stato)"></div>
+          <div class="card-content-compact">
+            <div class="top-meta">
+              <span class="tipo-badge tipo-rds">RDS</span>
+            </div>
+            <div class="main-info">
+              <p class="req-title-small">{{ attrezzatureService.nomeTipo(richiesta.rds.tipoAttrezzaturaId) }}</p>
+            </div>
+            <div class="dates-row">
+              <div class="date-item">
+                <span class="date-item-label">Creata il</span>
+                <span class="date-item-value">{{ richiesta.rds.data | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            <p class="req-status-mini" [class]="statusClass(richiesta.rds.stato)">
+              {{ statusLabel(richiesta.rds.stato) }}
+            </p>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon-small"></ion-icon>
+        </div>
+      }
+    } @empty {
+      <div class="empty-state">
+        <ion-icon name="list-outline"></ion-icon>
+        <h3>Nessuna richiesta</h3>
+        <p>Non hai ancora inserito richieste</p>
+      </div>
+    }
+    }
+  </div>
+
+  <ion-infinite-scroll (ionInfinite)="caricaAltri($event)" [disabled]="tuttiCaricati()">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="apriSceltaNuova()">
+      <ion-icon name="add-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

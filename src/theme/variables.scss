@@ -1,0 +1,79 @@
+/** Ionic CSS Variables **/
+:root, .md, .ios {
+  /** global font **/
+  --ion-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --ion-background-color: #f3f2f2;
+  --ion-background-color-rgb: 243, 242, 242;
+  --ion-text-color: #18181b;
+  --ion-text-color-rgb: 24, 24, 27;
+
+  /** PRIMARY (Teal Scuro) **/
+  --ion-color-primary: #005157;
+  --ion-color-primary-rgb: 0,81,87;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255,255,255;
+  --ion-color-primary-shade: #00474d;
+  --ion-color-primary-tint: #1a6268;
+
+  /** SECONDARY (Teal) **/
+  --ion-color-secondary: #1a9ea8;
+  --ion-color-secondary-rgb: 26,158,168;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-shade: #178b94;
+  --ion-color-secondary-tint: #31a8b1;
+
+  /** SUCCESS **/
+  --ion-color-success: #2ecc71;
+  --ion-color-success-rgb: 46, 204, 113;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-shade: #28b463;
+  --ion-color-success-tint: #42d484;
+
+  /** DANGER **/
+  --ion-color-danger: #e74c3c;
+  --ion-color-danger-rgb: 231, 76, 60;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #cb3e2e;
+  --ion-color-danger-tint: #e95e50;
+
+  --ion-color-warning: #FFC735;
+  --ion-color-medium: #e4e4e7;
+  --ion-color-light: #f4f7f6;
+
+  /** CUSTOM COLORS **/
+  --ion-color-white: #ffffff;
+  --ion-color-black: #000000;
+}
+
+.ion-color-white { --ion-color-base: var(--ion-color-white); --ion-color-contrast: #000; }
+.ion-color-black { --ion-color-base: var(--ion-color-black); --ion-color-contrast: #fff; }
+
+$radius-lg: 18px;
+$radius-md: 12px;
+$radius-sm: 7px;
+
+$brand-primary: #005157;
+$brand-teal:    #4db6ac;
+$brand-dark:    #1a3a3a;
+
+// Palette Stati
+$green:   #2ecc71;
+$red:     #e74c3c;
+$blue:    #1868b9;
+$yellow:  #FFC735;
+$grey:    #95a5a6;
+$white:   #FFFFFF;
+
+// Gradiente header (identico a easy-box)
+$header-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+
+// Shadow
+$shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+$shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+// Utils
+$bg-app: #f4f7f6;
+$text-main:          #2c3e50;
+$text-muted:         #95a5a6;
+$border-color:       rgba(0, 0, 0, 0.05);

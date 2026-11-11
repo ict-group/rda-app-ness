@@ -1,0 +1,90 @@
+:host {
+  display: contents;
+}
+
+.push-mock {
+  position: fixed;
+  top: calc(10px + env(safe-area-inset-top));
+  left: 10px;
+  right: 10px;
+  z-index: 99999;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: push-mock-in 0.3s ease;
+}
+
+@keyframes push-mock-in {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.push-mock-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #005157;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #ffffff;
+  }
+}
+
+.push-mock-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.push-mock-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+
+  .push-mock-app {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #6b7a79;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .push-mock-time {
+    font-size: 0.68rem;
+    color: #95a5a6;
+  }
+}
+
+.push-mock-title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #1a2e35;
+}
+
+.push-mock-message {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #4a5a59;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

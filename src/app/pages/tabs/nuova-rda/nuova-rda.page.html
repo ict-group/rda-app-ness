@@ -1,0 +1,260 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/lista-rda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nuova RDA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="nuova-rda-bg">
+  <form [formGroup]="form" class="form-wrapper">
+
+    <!-- CANTIERE (preselezionato) -->
+    <div class="form-field">
+      <label>Cantiere</label>
+      <div class="field-box readonly">
+        <ion-icon name="business-outline"></ion-icon>
+        <span class="field-value">{{ cantiereCorrente()?.ragioneSociale ?? 'Nessun cantiere disponibile' }}</span>
+      </div>
+      <!--
+      @if (budgetService.budgetGenerale(); as generale) {
+        <p class="field-hint">
+          Budget generale cantiere (senza gruppo merceologico): {{ generale.totale | number: '1.2-2' }} €
+          @if (generale.periodo) { · periodo {{ generale.periodo }} }
+        </p>
+      }
+      -->
+    </div>
+
+    <!-- DATA CONSEGNA -->
+    <div class="form-field">
+      <label for="data-consegna">Data consegna</label>
+      <div class="field-box" [class.field-error]="isInvalid('dataConsegna')">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <input id="data-consegna" type="date" formControlName="dataConsegna" class="field-input" />
+      </div>
+    </div>
+
+    <!-- GRUPPO MERCEOLOGICO -->
+    <div class="form-field">
+      <label for="gruppo">Gruppo merceologico</label>
+      <div class="field-box select-box" [class.field-error]="isInvalid('gruppoMerceologicoId')">
+        <ion-icon name="pricetags-outline"></ion-icon>
+        <select
+          id="gruppo"
+          formControlName="gruppoMerceologicoId"
+          class="field-input"
+          (change)="onGruppoChange()"
+        >
+          <option value="" disabled>Seleziona gruppo</option>
+          @for (gruppo of anagraficheService.gruppiMerceologici(); track gruppo.id) {
+            <option [value]="gruppo.id">{{ gruppo.nome }}</option>
+          }
+        </select>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </div>
+      @if (anagraficheService.gruppiMerceologici().length === 0) {
+        <p class="field-hint">Nessun gruppo scaricato. Vai in Configurazione per scaricarli.</p>
+      }
+    </div>
+
+    <!-- BUSINESS UNIT -->
+    <div class="form-field">
+      <label for="business-unit">Business unit</label>
+      <div class="field-box select-box" [class.field-error]="isInvalid('businessUnit')">
+        <ion-icon name="briefcase-outline"></ion-icon>
+        <select id="business-unit" formControlName="businessUnit" class="field-input">
+          <option value="" disabled>Seleziona business unit</option>
+          @for (bu of anagraficheService.businessUnit(); track bu.id) {
+            <option [value]="bu.nome">{{ bu.nome }}</option>
+          }
+        </select>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </div>
+      @if (anagraficheService.businessUnit().length === 0) {
+        <p class="field-hint">Nessuna business unit scaricata. Vai in Configurazione per scaricarla.</p>
+      }
+    </div>
+
+    <!-- NOTE -->
+    <div class="form-field">
+      <label for="nota">Note</label>
+      <div class="field-box" [class.field-error]="isInvalid('nota')">
+        <ion-icon name="create-outline"></ion-icon>
+        <input
+          id="nota"
+          type="text"
+          formControlName="nota"
+          placeholder="Nome per ritrovare l'RDA"
+          class="field-input"
+        />
+      </div>
+    </div>
+
+    <!-- BUDGET / TOTALE RDA / RESIDUO -->
+    @if (gruppoId()) {
+      <div class="form-field">
+        <div class="budget-summary">
+          <div class="budget-col">
+            <label>Budget gruppo</label>
+            <div class="budget-value-box">{{ (budgetGruppoSelezionato()?.totale ?? 0) | number: '1.0-2' }}</div>
+          </div>
+          <div class="budget-col">
+            <label>Totale gruppo</label>
+            <div class="budget-value-box">{{ totaleRdaGruppoSelezionato() | number: '1.2-2' }}</div>
+          </div>
+          <div class="budget-col">
+            <label>Residuo gruppo</label>
+            <div class="budget-value-box" [class.negativo]="residuo() < 0">{{ residuo() | number: '1.2-2' }}</div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <p class="field-hint">Seleziona un gruppo merceologico per vedere il budget disponibile.</p>
+    }
+
+    <!-- ARTICOLI -->
+    <div class="form-field">
+      <label>Articoli</label>
+
+      @if (!gruppoId()) {
+        <p class="field-hint">Seleziona un gruppo merceologico per vedere i suoi articoli.</p>
+      } @else {
+        <p class="field-hint">
+          Imposta la quantità per gli articoli di questo gruppo. Le quantità impostate su altri gruppi restano
+          comunque nell'RDA anche se cambi gruppo.
+        </p>
+
+        <div class="articoli-table-wrapper">
+          <table class="articoli-table">
+            <thead>
+              <tr>
+                <th>Articolo</th>
+                <th class="col-descrizione">Descrizione</th>
+                <th>Quantità</th>
+                <th>UM</th>
+                <th>Prezzo</th>
+                <th>Importo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (articolo of articoliDelGruppo(); track articolo.id) {
+                <tr [class.riga-attiva]="(quantita()[articolo.id] ?? 0) > 0">
+                  <td data-label="Articolo" class="col-articolo">
+                    <span class="codice">{{ articolo.codice }}</span>
+                    <span class="descrizione-mobile">{{ articolo.nome }}</span>
+                  </td>
+                  <td data-label="Descrizione" class="col-descrizione">{{ articolo.nome }}</td>
+                  <td data-label="Quantità">
+                    <input
+                      type="number"
+                      min="0"
+                      class="riga-quantita"
+                      aria-label="Quantità"
+                      [value]="quantita()[articolo.id] ?? 0"
+                      (change)="aggiornaQuantita(articolo, $any($event.target).valueAsNumber)"
+                    />
+                  </td>
+                  <td data-label="UM">{{ articolo.um }}</td>
+                  <td data-label="Prezzo">{{ articolo.prezzo | number: '1.2-2' }}</td>
+                  <td data-label="Importo">
+                    {{ (articolo.prezzo * (quantita()[articolo.id] ?? 0)) | number: '1.2-2' }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="riga-vuota">Nessun articolo per questo gruppo merceologico.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (righe().length > 0) {
+        <p class="field-hint">Totale articoli inseriti (tutti i gruppi): {{ righe().length }}.</p>
+      }
+    </div>
+  </form>
+
+  <!-- RIEPILOGO -->
+  <ion-modal [isOpen]="modalRiepilogoAperto()" (didDismiss)="chiudiRiepilogo()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Riepilogo RDA</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="chiudiRiepilogo()">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="articoli-modal-bg">
+        <div class="riepilogo-wrapper">
+          @for (gruppo of riepilogoGruppi(); track gruppo.gruppoId) {
+            <div class="riepilogo-gruppo">
+              <div class="riepilogo-gruppo-header">
+                <span class="riepilogo-gruppo-nome">{{ gruppo.nome }}</span>
+                @if (gruppo.budget) {
+                  <span
+                    class="riepilogo-gruppo-budget"
+                    [class.negativo]="gruppo.budget.residuo - gruppo.subtotale < 0"
+                  >
+                    Residuo dopo RDA: {{ gruppo.budget.residuo - gruppo.subtotale | number: '1.2-2' }} €
+                  </span>
+                }
+              </div>
+              @for (riga of gruppo.righe; track riga.id) {
+                <div class="riepilogo-riga">
+                  <span class="riepilogo-riga-nome">{{ riga.nome }} × {{ riga.quantita }} {{ riga.um }}</span>
+                  <span class="riepilogo-riga-importo">{{ riga.importo | number: '1.2-2' }} €</span>
+                </div>
+              }
+              <div class="riepilogo-subtotale">
+                <span>Subtotale gruppo</span>
+                <span>{{ gruppo.subtotale | number: '1.2-2' }} €</span>
+              </div>
+            </div>
+          }
+          <div class="riepilogo-totale">
+            <span>Totale RDA</span>
+            <span>{{ totaleRda() | number: '1.2-2' }} €</span>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer class="ion-no-border">
+        <div class="footer-actions">
+          <ion-button expand="block" class="btn-submit" [disabled]="isInviando()" (click)="confermaSalvataggio()">
+            @if (isInviando()) {
+              <ion-spinner slot="start" name="crescent"></ion-spinner>
+              Invio in corso...
+            } @else {
+              <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+              Invia RDA
+            }
+          </ion-button>
+        </div>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="footer-actions">
+    <ion-button expand="block" fill="outline" class="btn-modifica" (click)="apriRiepilogo()">
+      <ion-icon slot="start" name="eye-outline"></ion-icon>
+      Vai al riepilogo
+    </ion-button>
+    <ion-button expand="block" class="btn-submit" [disabled]="isInviando()" (click)="inviaRda()">
+      @if (isInviando()) {
+        <ion-spinner slot="start" name="crescent"></ion-spinner>
+        Invio in corso...
+      } @else {
+        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+        Invia RDA
+      }
+    </ion-button>
+  </div>
+</ion-footer>

@@ -1,0 +1,7 @@
+{
+  "name": "rda-app-ness",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

@@ -1,0 +1,135 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/lista-rda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Dettaglio RDA</ion-title>
+    @if (rda()?.sincronizzato === false) {
+      <ion-buttons slot="end">
+        <ion-button (click)="elimina()">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dettaglio-bg">
+  @if (rdaService.isCaricandoDettaglio() && !rda()) {
+    <div class="dettaglio-wrapper">
+      <div class="dettaglio-header-card">
+        <ion-skeleton-text animated class="sk-titolo"></ion-skeleton-text>
+        <ion-skeleton-text animated class="sk-status"></ion-skeleton-text>
+      </div>
+      <div class="dettaglio-info-card">
+        @for (n of [1, 2, 3, 4, 5, 6]; track n) {
+          <div class="info-row">
+            <ion-skeleton-text animated class="sk-info-label"></ion-skeleton-text>
+            <ion-skeleton-text animated class="sk-info-value"></ion-skeleton-text>
+          </div>
+        }
+      </div>
+    </div>
+  } @else if (rda(); as rda) {
+    <div class="dettaglio-wrapper">
+      <div class="dettaglio-header-card">
+        <p class="dettaglio-titolo">{{ rda.descrizione }}</p>
+        <p class="req-status-mini" [class]="statusClass(rda.stato)">{{ statusLabel(rda.stato) }}</p>
+      </div>
+
+      <div class="dettaglio-info-card">
+        <div class="info-row">
+          <span class="info-label">Cantiere</span>
+          <span class="info-value">{{ anagraficheService.nomeCantiere(rda.cantiereId ?? '') }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Gruppo merceologico</span>
+          <span class="info-value">{{ anagraficheService.nomeGruppo(rda.gruppoMerceologicoId ?? '') }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Business unit</span>
+          <span class="info-value">{{ rda.businessUnit ?? '-' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Data consegna</span>
+          <span class="info-value">{{ rda.data | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Creata il</span>
+          <span class="info-value">{{ rda.dataCreazione | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Importo totale</span>
+          <span class="info-value">{{ rda.importo | number: '1.2-2' }} €</span>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span>Articoli per gruppo merceologico</span>
+      </div>
+
+      @for (gruppo of riepilogoGruppi(); track gruppo.gruppoId) {
+        <div class="riepilogo-gruppo">
+          <div class="riepilogo-gruppo-header">
+            <span class="riepilogo-gruppo-nome">{{ gruppo.nome }}</span>
+            @if (gruppo.budget) {
+              <span class="riepilogo-gruppo-budget" [class.negativo]="gruppo.budget.residuo - gruppo.subtotale < 0">
+                Residuo gruppo: {{ gruppo.budget.residuo - gruppo.subtotale | number: '1.2-2' }} € /
+                {{ gruppo.budget.totale | number: '1.0-2' }} €
+              </span>
+            }
+          </div>
+
+          <div class="articoli-table-wrapper">
+            <table class="articoli-table">
+              <thead>
+                <tr>
+                  <th>Articolo</th>
+                  <th class="col-descrizione">Descrizione</th>
+                  <th>Quantità</th>
+                  <th>UM</th>
+                  <th>Prezzo</th>
+                  <th>Importo</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (riga of gruppo.righe; track riga.id) {
+                  <tr>
+                    <td data-label="Articolo" class="col-articolo">
+                      <span class="codice">{{ riga.codice }}</span>
+                      <span class="descrizione-mobile">{{ riga.nome }}</span>
+                    </td>
+                    <td data-label="Descrizione" class="col-descrizione">{{ riga.nome }}</td>
+                    <td data-label="Quantità">{{ riga.quantita }}</td>
+                    <td data-label="UM">{{ riga.um }}</td>
+                    <td data-label="Prezzo">{{ riga.prezzo | number: '1.2-2' }}</td>
+                    <td data-label="Importo">{{ riga.importo | number: '1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="riepilogo-subtotale">
+            <span>Totale speso su questo gruppo</span>
+            <span>{{ gruppo.subtotale | number: '1.2-2' }} €</span>
+          </div>
+        </div>
+      } @empty {
+        <p class="field-hint">Nessun articolo.</p>
+      }
+
+      <div class="cta-wrapper">
+        <ion-button expand="block" class="btn-ordini" [routerLink]="['/tabs/lista-ordini']" [queryParams]="{ rdaId: rda.id }">
+          <ion-icon slot="start" name="cart-outline"></ion-icon>
+          Vedi ordini collegati
+        </ion-button>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h3>RDA non trovata</h3>
+    </div>
+  }
+</ion-content>

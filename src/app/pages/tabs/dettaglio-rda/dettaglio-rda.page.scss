@@ -1,0 +1,118 @@
+@use '../../../../theme/variables' as *;
+
+.dettaglio-bg {
+  --background: #f3f2f2;
+}
+
+.dettaglio-wrapper {
+  padding: 20px;
+}
+
+.dettaglio-header-card {
+  background: $white;
+  border-radius: $radius-lg;
+  padding: 18px 20px;
+  box-shadow: $shadow-soft;
+  margin-bottom: 14px;
+}
+
+.dettaglio-titolo {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: $text-main;
+}
+
+.dettaglio-info-card {
+  background: $white;
+  border-radius: $radius-lg;
+  padding: 6px 20px;
+  box-shadow: $shadow-soft;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.info-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $text-main;
+  text-align: right;
+}
+
+// Skeleton (mentre rdaService.isCaricandoDettaglio()).
+.sk-titolo {
+  width: 70%;
+  height: 18px;
+}
+
+.sk-status {
+  width: 30%;
+  height: 20px;
+  margin-top: 8px;
+  border-radius: 12px;
+}
+
+.sk-info-label {
+  width: 35%;
+  height: 12px;
+}
+
+.sk-info-value {
+  width: 25%;
+  height: 12px;
+}
+
+.section-title {
+  margin-bottom: 10px;
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.field-hint {
+  margin: 0 0 20px;
+  font-size: 0.8rem;
+  color: $text-muted;
+}
+
+.riepilogo-gruppo {
+  margin-bottom: 16px;
+}
+
+.cta-wrapper {
+  margin-top: 20px;
+}
+
+.btn-ordini {
+  --background: #{$brand-primary};
+  --background-activated: #{$brand-dark};
+  --border-radius: #{$radius-md};
+  --box-shadow: #{$shadow-soft};
+  font-weight: 700;
+  height: 50px;
+}

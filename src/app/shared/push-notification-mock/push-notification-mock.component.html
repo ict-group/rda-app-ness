@@ -1,0 +1,15 @@
+@if (mockNotificationService.notifica(); as notifica) {
+  <div class="push-mock" (click)="chiudi()">
+    <div class="push-mock-icon">
+      <ion-icon name="document-text-outline"></ion-icon>
+    </div>
+    <div class="push-mock-body">
+      <div class="push-mock-top">
+        <span class="push-mock-app">RDA App</span>
+        <span class="push-mock-time">ora</span>
+      </div>
+      <p class="push-mock-title">{{ notifica.titolo }}</p>
+      <p class="push-mock-message">{{ notifica.messaggio }}</p>
+    </div>
+  </div>
+}

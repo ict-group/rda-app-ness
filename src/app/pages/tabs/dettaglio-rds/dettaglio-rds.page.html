@@ -1,0 +1,95 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/lista-rda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Dettaglio RDS</ion-title>
+    @if (rds()?.sincronizzato === false) {
+      <ion-buttons slot="end">
+        <ion-button (click)="elimina()">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dettaglio-bg">
+  @if (rdsService.isCaricandoDettaglio() && !rds()) {
+    <div class="dettaglio-wrapper">
+      <div class="dettaglio-header-card">
+        <ion-skeleton-text animated class="sk-titolo"></ion-skeleton-text>
+        <ion-skeleton-text animated class="sk-status"></ion-skeleton-text>
+      </div>
+      <div class="dettaglio-info-card">
+        @for (n of [1, 2, 3, 4, 5]; track n) {
+          <div class="info-row">
+            <ion-skeleton-text animated class="sk-info-label"></ion-skeleton-text>
+            <ion-skeleton-text animated class="sk-info-value"></ion-skeleton-text>
+          </div>
+        }
+      </div>
+    </div>
+  } @else if (rds(); as rds) {
+    <div class="dettaglio-wrapper">
+      <div class="dettaglio-header-card">
+        <p class="dettaglio-titolo">{{ attrezzatureService.nomeTipo(rds.tipoAttrezzaturaId) }}</p>
+        <div class="badge-row">
+          <p class="req-status-mini" [class]="statusClass(rds.stato)">{{ statusLabel(rds.stato) }}</p>
+          <p class="req-status-mini" [class]="rds.statoMezzo === StatoMezzo.Funzionante ? 'approvata' : 'rifiutata'">
+            {{ rds.statoMezzo === StatoMezzo.Funzionante ? 'Mezzo funzionante' : 'Mezzo fermo' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="dettaglio-info-card">
+        <div class="info-row">
+          <span class="info-label">Creata il</span>
+          <span class="info-value">{{ rds.data | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Rif. cliente</span>
+          <span class="info-value">{{ rds.rifCliente }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Telefono</span>
+          <span class="info-value">{{ rds.telefono }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Orari di accesso</span>
+          <span class="info-value">{{ rds.orariAccesso || '-' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Note</span>
+          <span class="info-value">{{ rds.note }}</span>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span>Attrezzatura</span>
+      </div>
+
+      <div class="articoli-table-wrapper">
+        <table class="articoli-table">
+          <thead>
+            <tr>
+              <th>Codice</th>
+              <th>Attrezzatura</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Codice">{{ rds.codArt }}</td>
+              <td data-label="Attrezzatura">{{ attrezzatureService.nomeAttrezzatura(rds.attrezzaturaId) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h3>RDS non trovata</h3>
+    </div>
+  }
+</ion-content>

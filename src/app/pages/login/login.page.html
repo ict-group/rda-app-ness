@@ -1,0 +1,39 @@
+<ion-content fullscreen="true" class="container">
+  <div class="page-wrapper">
+
+    <!-- LOGO -->
+    <div class="logo-section animate-fade-down">
+      <div class="logo-card">
+        <img src="assets/icon/ict-group-logo.png" alt="ICT Group" class="logo-image" />
+      </div>
+    </div>
+
+    <!-- CARD LOGIN -->
+    <div class="login-card animate-fade-up">
+
+      <!-- ERRORE -->
+      @if (errorMessage()) {
+        <div class="login-error">{{ errorMessage() }}</div>
+      }
+
+      <!-- SUBMIT -->
+      @if (restoringSession()) {
+        <ion-button disabled class="btn-primary" expand="block">
+          <ion-spinner slot="start" name="crescent"></ion-spinner>
+          Verifica sessione...
+        </ion-button>
+      } @else {
+        <ion-button [disabled]="isLoading()" (click)="onLogin()" class="btn-primary" expand="block">
+          @if (isLoading()) {
+            <ion-spinner slot="start" name="crescent"></ion-spinner>
+            Accesso in corso...
+          } @else {
+            <ion-icon slot="start" name="log-in-outline"></ion-icon>
+            Accedi
+          }
+        </ion-button>
+      }
+    </div>
+
+  </div>
+</ion-content>

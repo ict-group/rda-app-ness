@@ -1,0 +1,300 @@
+.sync-bg {
+  --background: #f3f2f2;
+}
+
+// Il modal di selezione cantiere usa i componenti Ionic "nudi" (ion-list/ion-item/ion-searchbar):
+// forziamo lo stesso tema chiaro del resto dell'app, altrimenti in dark mode di sistema
+// (@ionic/angular/css/palettes/dark.system.css) risultano illeggibili (sfondo quasi nero).
+.modal-cantiere-content {
+  --background: #ffffff;
+  --color: #1a1a1a;
+}
+
+.modal-cantiere-list {
+  background: #ffffff;
+
+  ion-item {
+    --background: #ffffff;
+    --color: #1a1a1a;
+    --border-color: #e6e6e6;
+  }
+}
+
+.modal-cantiere-searchbar {
+  --background: #ffffff;
+  --color: #1a1a1a;
+  --placeholder-color: #8a8a8a;
+  --icon-color: #8a8a8a;
+}
+
+.sync-card {
+  margin: 24px 20px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.sync-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(0, 81, 87, 0.08);
+  margin-bottom: 16px;
+
+  ion-icon {
+    font-size: 2.2rem;
+    color: #005157;
+  }
+
+  &.spinning ion-icon {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sync-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a2e35;
+  margin: 0 0 8px;
+}
+
+.sync-subtitle {
+  font-size: 0.82rem;
+  color: #95a5a6;
+  margin: 0 0 24px;
+  line-height: 1.4;
+}
+
+.sync-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.sync-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #95a5a6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .value {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1a2e35;
+
+    &.has-pending {
+      color: #e74c3c;
+    }
+  }
+}
+
+.btn-sync {
+  --background: #005157;
+  --background-activated: #00474d;
+  --border-radius: 14px;
+  --color: #ffffff;
+  font-weight: 700;
+  height: 50px;
+}
+
+.section-title {
+  padding: 0 20px;
+  margin: 24px 0 10px;
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.anagrafica-card {
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 0 20px 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.anagrafica-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.anagrafica-row.selezionabile {
+  cursor: pointer;
+}
+
+.badge-connessione {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  border-radius: 50%;
+  color: #1a7a4c;
+  background: #e3f6ec;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+
+  &.offline {
+    color: #b23a3a;
+    background: #fbe7e7;
+  }
+}
+
+.field-hint {
+  margin: 6px 20px 0;
+  font-size: 0.75rem;
+  color: #8a8a8a;
+}
+
+.anagrafica-icon-wrapper {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(0, 81, 87, 0.08);
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: #005157;
+  }
+}
+
+.anagrafica-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.anagrafica-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #1a2e35;
+  margin: 0;
+}
+
+.anagrafica-status {
+  font-size: 0.72rem;
+  color: #95a5a6;
+  margin: 2px 0 0;
+
+  &.downloaded {
+    color: #2ecc71;
+    font-weight: 600;
+  }
+}
+
+.btn-download {
+  flex-shrink: 0;
+  --color: #005157;
+  margin: 0;
+
+  ion-icon {
+    font-size: 1.4rem;
+  }
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.btn-demo {
+  --color: #005157;
+  --border-color: #005157;
+  --border-radius: 14px;
+  font-weight: 700;
+  height: 48px;
+  margin: 0 0 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Sotto i 600px (telefono) la card cantiere/sincronizzazione occupa troppo
+// spazio verticale: riduciamo margini/padding e compattiamo riga stato/pulsanti.
+@media (max-width: 600px) {
+  .sync-card {
+    margin: 16px 12px;
+    padding: 16px 14px;
+  }
+
+  .anagrafica-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+
+    ion-icon {
+      font-size: 1.1rem;
+    }
+  }
+
+  .anagrafica-title {
+    font-size: 0.85rem;
+  }
+
+  .anagrafica-status {
+    font-size: 0.68rem;
+  }
+
+  .badge-connessione {
+    padding: 5px;
+    border-radius: 50%;
+
+    ion-icon {
+      font-size: 0.95rem;
+    }
+  }
+
+  .sync-info-row {
+    margin: 14px 0 16px;
+  }
+
+  .sync-info {
+    .label {
+      font-size: 0.6rem;
+    }
+
+    .value {
+      font-size: 0.85rem;
+    }
+  }
+
+  .btn-sync {
+    height: 42px;
+    font-size: 0.85rem;
+
+    & + .btn-sync {
+      margin-top: 8px;
+    }
+  }
+}
+

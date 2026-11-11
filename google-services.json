@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1063431293626",
+    "project_id": "rds-app-927ab",
+    "storage_bucket": "rds-app-927ab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063431293626:android:25be09f8fdea55c9bb1083",
+        "android_client_info": {
+          "package_name": "it.ictgroup.rda.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA6CUSjb6RuO0Nfs5_3tz9sTrr2AMs5XI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

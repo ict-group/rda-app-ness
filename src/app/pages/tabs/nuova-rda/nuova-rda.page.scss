@@ -1,0 +1,167 @@
+@use '../../../../theme/variables' as *;
+
+.nuova-rda-bg {
+  --background: #f3f2f2;
+}
+
+.form-wrapper {
+  padding: 20px;
+}
+
+.form-field {
+  margin-bottom: 18px;
+
+  label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+}
+
+.field-box {
+  display: flex;
+  align-items: center;
+  background: $white;
+  border: 1.5px solid $border-color;
+  border-radius: $radius-md;
+  padding: 4px 14px;
+  box-shadow: $shadow-soft;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+
+  ion-icon:first-child {
+    color: $brand-primary;
+    font-size: 1.1rem;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  &:focus-within {
+    border-color: $brand-teal;
+    box-shadow: 0 0 0 3px rgba($brand-teal, 0.15);
+  }
+
+  &.readonly {
+    background: #f8f8f8;
+    .field-value {
+      flex: 1;
+      padding: 12px 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $text-main;
+    }
+  }
+
+  &.field-error {
+    border-color: $red;
+  }
+
+  &.select-box {
+    position: relative;
+
+    .chevron {
+      color: $text-muted;
+      font-size: 0.9rem;
+      margin-left: 8px;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+.field-input {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $text-main;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 12px 0;
+  font-family: inherit;
+  appearance: none;
+
+  &::placeholder {
+    color: $text-muted;
+    font-weight: 400;
+  }
+}
+
+.field-hint {
+  margin: 6px 2px 0;
+  font-size: 0.75rem;
+  color: $text-muted;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  label {
+    margin-bottom: 0;
+  }
+}
+
+.add-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: $brand-primary;
+  color: $white;
+  box-shadow: $shadow-soft;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:disabled {
+    background: $border-color;
+    color: $text-muted;
+    box-shadow: none;
+  }
+}
+
+.footer-actions {
+  padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
+  background: $white;
+  display: flex;
+  gap: 10px;
+
+  ion-button {
+    flex: 1;
+  }
+}
+
+.btn-submit {
+  margin: 0;
+  --background: #{$brand-primary};
+  --background-activated: #{$brand-dark};
+  --border-radius: #{$radius-md};
+  --box-shadow: #{$shadow-soft};
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  height: 52px;
+}
+
+.btn-modifica {
+  margin: 0;
+  --color: #{$brand-primary};
+  --border-color: #{$brand-primary};
+  --border-radius: #{$radius-md};
+  font-weight: 700;
+  height: 52px;
+}

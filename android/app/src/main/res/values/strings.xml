@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Eggs-rda</string>
+    <string name="title_activity_main">Eggs-rda</string>
+    <string name="package_name">it.ictgroup.rda.app</string>
+    <string name="custom_url_scheme">it.ictgroup.rda.app</string>
+</resources>

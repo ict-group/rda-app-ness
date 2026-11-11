@@ -1,0 +1,258 @@
+<ion-content fullscreen="true" class="home-bg" [scrollY]="false">
+
+@if (anagraficheService.isDownloading() === 'cantieri') {
+  <div class="loading-overlay">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+}
+
+<div class="home-flex">
+
+<div class="home-layout">
+
+  <!-- HEADER -->
+  <div class="header-premium">
+    <div class="header-icon-top">
+      <ion-icon name="document-text-outline"></ion-icon>
+    </div>
+    <div class="header-inner">
+      <div class="user-box">
+        <div class="pre-title">Benvenuto</div>
+        <div class="user-name">
+          {{ authService.currentUser()?.nome }} {{ authService.currentUser()?.cognome }}
+        </div>
+        @if (anagraficheService.stato().cantieri.scaricato) {
+          <div class="cantiere-name">{{ anagraficheService.cantiereCorrente?.ragioneSociale }}</div>
+        }
+        <div class="dept-name">Richieste di Acquisto</div>
+      </div>
+      <ion-button fill="clear" class="btn-logout" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- BUDGET CARDS PER GRUPPO MERCEOLOGICO -->
+  <div class="budget-cards-row" #budgetScroll (scroll)="onBudgetScroll(budgetScroll)">
+    <!--
+    @if (budgetService.budgetGenerale(); as generale) {
+      <div class="budget-card">
+        <div class="budget-group-name">Budget generale cantiere</div>
+        <div class="budget-row">
+          <div>
+            <div class="budget-label">Budget</div>
+            <div class="budget-value">{{ generale.totale }} €</div>
+          </div>
+          <div class="budget-divider"></div>
+          <div>
+            <div class="budget-label">Residuo</div>
+            <div class="budget-value residuo">{{ generale.residuo }} €</div>
+          </div>
+        </div>
+      </div>
+    }
+    -->
+    @if (anagraficheService.isDownloading() === 'gruppi' && budgetService.budgetGruppi().length === 0) {
+      @for (n of [1, 2]; track n) {
+        <div class="budget-card">
+          <ion-skeleton-text animated class="sk-title"></ion-skeleton-text>
+          <div class="budget-row">
+            <div class="sk-full-width">
+              <ion-skeleton-text animated class="sk-label"></ion-skeleton-text>
+              <ion-skeleton-text animated class="sk-value"></ion-skeleton-text>
+            </div>
+          </div>
+        </div>
+      }
+    }
+    @for (gruppo of budgetService.budgetGruppi(); track gruppo.gruppoMerceologicoId) {
+      <div class="budget-card">
+        <div class="budget-group-header">
+          <div class="budget-group-name">{{ gruppo.nome }}</div>
+          <ion-button
+            fill="clear"
+            size="small"
+            class="btn-refresh-budget"
+            [disabled]="anagraficheService.isDownloading() === 'gruppi'"
+            (click)="aggiornaBudget()"
+          >
+            @if (anagraficheService.isDownloading() === 'gruppi') {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              <ion-icon name="refresh-outline"></ion-icon>
+            }
+          </ion-button>
+        </div>
+        <div class="budget-row">
+          <div>
+            <div class="budget-label">Budget</div>
+            <div class="budget-value">{{ gruppo.totale }} €</div>
+          </div>
+          <!--
+          <div class="budget-divider"></div>
+          <div>
+            <div class="budget-label">Residuo</div>
+            <div class="budget-value residuo">{{ gruppo.residuo }} €</div>
+          </div>
+          -->
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (budgetService.budgetGruppi().length > 1) {
+    <div class="budget-dots">
+      @for (gruppo of budgetService.budgetGruppi(); track gruppo.gruppoMerceologicoId; let i = $index) {
+        <span class="budget-dot" [class.attivo]="i === budgetAttivo()"></span>
+      }
+    </div>
+  }
+
+  <!-- INVIA TUTTO: solo se ci sono RDA/RDS non ancora inviate -->
+  @if (syncService.pendingCount() > 0) {
+    <div class="banner-invia-tutto">
+      <div class="banner-invia-tutto-info">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        <span>{{ syncService.pendingCount() }} richieste da inviare</span>
+      </div>
+      <ion-button
+        size="small"
+        fill="solid"
+        [disabled]="syncService.isInviando() || !networkService.isOnline()"
+        (click)="inviaTutto()"
+      >
+        @if (syncService.isInviando()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          Invia tutto
+        }
+      </ion-button>
+    </div>
+  }
+
+  <!-- CTA NUOVA RDA / NUOVO RDS -->
+  <div class="cta-wrapper cta-wrapper-row">
+    <ion-button expand="block" class="btn-nuova-rda" routerLink="/tabs/nuova-rda">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Nuova RDA
+    </ion-button>
+    <ion-button expand="block" class="btn-nuova-rda btn-nuovo-rds" routerLink="/tabs/nuova-rds">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Nuovo RDS
+    </ion-button>
+  </div>
+
+  <!-- ULTIME RDA / RDS -->
+  <div class="section-title">
+    <span>Ultime inserite</span>
+  </div>
+
+  <ion-segment
+    mode="ios"
+    [value]="tabAttivo()"
+    (ionChange)="cambiaTab($any($event.detail.value))"
+    class="tab-ultime"
+  >
+    <ion-segment-button value="rda">
+      <ion-label>RDA</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="rds">
+      <ion-label>RDS</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+</div>
+
+<div class="ultime-scroll">
+
+  @if (tabAttivo() === 'rda' ? (rdaService.isCaricandoLista() && rdaService.paginaCorrente() === 0) : (rdsService.isCaricandoLista() && rdsService.paginaCorrente() === 0)) {
+    @for (n of [1, 2, 3]; track n) {
+      <div class="request-card slim-home skeleton-card">
+        <div class="side-indicator"></div>
+        <div class="card-content-compact">
+          <ion-skeleton-text animated class="sk-date"></ion-skeleton-text>
+          <ion-skeleton-text animated class="sk-title-req"></ion-skeleton-text>
+          <ion-skeleton-text animated class="sk-dates-row"></ion-skeleton-text>
+          <ion-skeleton-text animated class="sk-status"></ion-skeleton-text>
+        </div>
+      </div>
+    }
+  } @else if (tabAttivo() === 'rda') {
+    @for (rda of rdaService.ultimeRda; track rda.id) {
+      <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rda', rda.id]">
+        <div class="side-indicator" [class]="sideClass(rda.stato)"></div>
+        <div class="card-content-compact">
+          <div class="top-meta">
+            <span class="date-text">{{ rda.data | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="main-info">
+            <p class="req-title-small">{{ rda.descrizione }}</p>
+          </div>
+          <div class="dates-row">
+            <div class="date-item">
+              <span class="date-item-label">Consegna</span>
+              <span class="date-item-value">{{ rda.data | date: 'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="date-item">
+              <span class="date-item-label">Creata il</span>
+              <span class="date-item-value">{{ rda.dataCreazione | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <p class="req-status-mini" [class]="statusClass(rda.stato)">{{ statusLabel(rda.stato) }}</p>
+          <a
+            class="link-ordini"
+            [routerLink]="['/tabs/lista-ordini']"
+            [queryParams]="{ rdaId: rda.id }"
+            (click)="$event.stopPropagation()"
+          >
+            Vedi ordini collegati
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </a>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon-small"></ion-icon>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <h3>Nessuna RDA</h3>
+        <p>Non hai ancora inserito richieste di acquisto</p>
+      </div>
+    }
+  } @else {
+    @for (rds of rdsService.ultimeRds; track rds.id) {
+      <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rds', rds.id]">
+        <div class="side-indicator" [class]="sideClass(rds.stato)"></div>
+        <div class="card-content-compact">
+          <div class="top-meta">
+            <span class="date-text">{{ rds.data | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="main-info">
+            <p class="req-title-small">{{ attrezzatureService.nomeTipo(rds.tipoAttrezzaturaId) }}</p>
+          </div>
+          <div class="dates-row">
+            <div class="date-item">
+              <span class="date-item-label">Creata il</span>
+              <span class="date-item-value">{{ rds.data | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <p class="req-status-mini" [class]="statusClass(rds.stato)">{{ statusLabel(rds.stato) }}</p>
+          <p class="req-status-mini" [class]="rds.statoMezzo === StatoMezzo.Funzionante ? 'approvata' : 'rifiutata'">
+            {{ rds.statoMezzo === StatoMezzo.Funzionante ? 'Mezzo funzionante' : 'Mezzo fermo' }}
+          </p>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon-small"></ion-icon>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <h3>Nessuna RDS</h3>
+        <p>Non hai ancora inserito richieste RDS</p>
+      </div>
+    }
+  }
+
+</div>
+
+</div>
+
+</ion-content>

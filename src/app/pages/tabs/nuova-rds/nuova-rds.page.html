@@ -1,0 +1,212 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nuovo RDS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="nuova-rds-bg">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-wrapper">
+
+    <!-- TIPO ATTREZZATURA -->
+    <div class="form-field">
+      <label for="tipo-attrezzatura">Tipo attrezzatura</label>
+      <div class="field-box select-box" [class.field-error]="isInvalid('tipoAttrezzaturaId')">
+        <ion-icon name="construct-outline"></ion-icon>
+        <select
+          id="tipo-attrezzatura"
+          formControlName="tipoAttrezzaturaId"
+          class="field-input"
+          (change)="onTipoChange()"
+        >
+          <option value="" disabled>Seleziona tipo</option>
+          @for (tipo of attrezzatureService.tipiAttrezzatura(); track tipo.id) {
+            <option [value]="tipo.id">{{ tipo.nome }}</option>
+          }
+        </select>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </div>
+      @if (attrezzatureService.tipiAttrezzatura().length === 0) {
+        <p class="field-hint">Nessun tipo scaricato. Vai in Configurazione per scaricarli.</p>
+      }
+    </div>
+
+    <!-- ATTREZZATURA SELEZIONATA -->
+    <div class="form-field">
+      <div class="section-header">
+        <label>Attrezzatura</label>
+        @if (!attrezzaturaSelezionata()) {
+          <button
+            type="button"
+            class="add-row-btn"
+            aria-label="Seleziona attrezzatura"
+            title="Seleziona attrezzatura"
+            [disabled]="!tipoSelezionatoId"
+            (click)="apriModalAttrezzature()"
+          >
+            <ion-icon name="add-outline"></ion-icon>
+          </button>
+        }
+      </div>
+
+      @if (!tipoSelezionatoId) {
+        <p class="field-hint">Seleziona un tipo attrezzatura per poter scegliere l'attrezzatura.</p>
+      } @else if (!attrezzaturaSelezionata()) {
+        <p class="field-hint">Nessuna attrezzatura selezionata.</p>
+      } @else {
+        <div class="articoli-table-wrapper">
+          <table class="articoli-table">
+            <thead>
+              <tr>
+                <th>Codice</th>
+                <th>Attrezzatura</th>
+                <th><span class="sr-only">Azioni</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Codice">{{ attrezzaturaSelezionata()!.codice }}</td>
+                <td data-label="Attrezzatura">{{ attrezzaturaSelezionata()!.nome }}</td>
+                <td class="azioni-rimuovi">
+                  <ion-icon
+                    name="trash-outline"
+                    role="button"
+                    aria-label="Rimuovi attrezzatura"
+                    (click)="rimuoviAttrezzatura()"
+                  ></ion-icon>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- NOTE -->
+    <div class="form-field">
+      <label for="note">Note</label>
+      <div class="field-box" [class.field-error]="isInvalid('note')">
+        <ion-icon name="create-outline"></ion-icon>
+        <input id="note" type="text" formControlName="note" placeholder="Note sulla richiesta" class="field-input" />
+      </div>
+    </div>
+
+    <!-- ORARI DI ACCESSO -->
+    <div class="form-field">
+      <label for="orari-accesso">Orari di accesso</label>
+      <div class="field-box">
+        <ion-icon name="time-outline"></ion-icon>
+        <input
+          id="orari-accesso"
+          type="text"
+          formControlName="orariAccesso"
+          placeholder="Es. dal lunedì al venerdì 8:00-17:00"
+          class="field-input"
+        />
+      </div>
+    </div>
+
+    <!-- RIF. CLIENTE / TELEFONO -->
+    <div class="form-row">
+      <div class="form-field">
+        <label for="rif-cliente">Rif. cliente</label>
+        <div class="field-box" [class.field-error]="isInvalid('rifCliente')">
+          <ion-icon name="person-outline"></ion-icon>
+          <input
+            id="rif-cliente"
+            type="text"
+            formControlName="rifCliente"
+            placeholder="Nome referente cliente"
+            class="field-input"
+          />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="telefono">Numero di telefono</label>
+        <div class="field-box" [class.field-error]="isInvalid('telefono')">
+          <ion-icon name="call-outline"></ion-icon>
+          <input
+            id="telefono"
+            type="tel"
+            formControlName="telefono"
+            placeholder="Numero di telefono"
+            class="field-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- STATO DEL MEZZO -->
+    <div class="form-field">
+      <label>Stato del mezzo</label>
+      <div class="stato-mezzo-toggle">
+        <button
+          type="button"
+          class="stato-btn"
+          [class.attivo]="form.controls.statoMezzo.value === StatoMezzo.Funzionante"
+          (click)="selezionaStatoMezzo(StatoMezzo.Funzionante)"
+        >
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          Funzionante
+        </button>
+        <button
+          type="button"
+          class="stato-btn stato-btn-ferma"
+          [class.attivo]="form.controls.statoMezzo.value === StatoMezzo.Ferma"
+          (click)="selezionaStatoMezzo(StatoMezzo.Ferma)"
+        >
+          <ion-icon name="close-circle-outline"></ion-icon>
+          Ferma
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- MODALE SELEZIONE ATTREZZATURA -->
+  <ion-modal [isOpen]="modalAttrezzatureAperto()" (didDismiss)="chiudiModalAttrezzature()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Seleziona attrezzatura</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="chiudiModalAttrezzature()">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="articoli-modal-bg">
+        <div class="selector-list">
+          @for (attrezzatura of attrezzaturePerTipoSelezionato(); track attrezzatura.id) {
+            <button type="button" class="selector-item" (click)="selezionaAttrezzatura(attrezzatura)">
+              <ion-icon name="construct-outline"></ion-icon>
+              <div class="selector-item-info">
+                <p class="selector-item-nome">{{ attrezzatura.nome }}</p>
+                <p class="selector-item-sub">{{ attrezzatura.codice }}</p>
+              </div>
+            </button>
+          } @empty {
+            <p class="empty-hint">Nessuna attrezzatura per questo tipo.</p>
+          }
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="footer-actions">
+    <ion-button expand="block" class="btn-submit" [disabled]="isInviando()" (click)="onSubmit()">
+      @if (isInviando()) {
+        <ion-spinner slot="start" name="crescent"></ion-spinner>
+        Invio in corso...
+      } @else {
+        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+        Invia RDS
+      }
+    </ion-button>
+  </div>
+</ion-footer>
