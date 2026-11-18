@@ -30,6 +30,9 @@ import {
   cloudUploadOutline,
   wifiOutline,
   settingsOutline,
+  buildOutline,
+  flaskOutline,
+  notificationsOutline,
 } from 'ionicons/icons';
 
 export function registerAllIcons(): void {
@@ -64,5 +67,8 @@ export function registerAllIcons(): void {
     'cloud-upload-outline': cloudUploadOutline,
     'wifi-outline': wifiOutline,
     'settings-outline': settingsOutline,
+    'build-outline': buildOutline,
+    'flask-outline': flaskOutline,
+    'notifications-outline': notificationsOutline,
   });
 }

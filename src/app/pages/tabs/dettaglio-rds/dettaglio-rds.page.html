@@ -35,7 +35,7 @@
       <div class="dettaglio-header-card">
         <p class="dettaglio-titolo">{{ attrezzatureService.nomeTipo(rds.tipoAttrezzaturaId) }}</p>
         <div class="badge-row">
-          <p class="req-status-mini" [class]="statusClass(rds.stato)">{{ statusLabel(rds.stato) }}</p>
+          <p class="req-status-mini" [class]="statusClass(rds.status)">{{ statusLabel(rds.status) }}</p>
           <p class="req-status-mini" [class]="rds.statoMezzo === StatoMezzo.Funzionante ? 'approvata' : 'rifiutata'">
             {{ rds.statoMezzo === StatoMezzo.Funzionante ? 'Mezzo funzionante' : 'Mezzo fermo' }}
           </p>

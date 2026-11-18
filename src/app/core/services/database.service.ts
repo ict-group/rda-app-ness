@@ -85,7 +85,7 @@ const SCHEMA = `
     importo REAL NOT NULL,
     data TEXT NOT NULL,
     data_creazione TEXT NOT NULL,
-    stato TEXT NOT NULL,
+    status TEXT NOT NULL,
     cantiere_id TEXT,
     gruppo_merceologico_id TEXT,
     business_unit TEXT,
@@ -108,7 +108,7 @@ const SCHEMA = `
   CREATE TABLE IF NOT EXISTS rds (
     id TEXT PRIMARY KEY,
     data TEXT NOT NULL,
-    stato TEXT NOT NULL,
+    status TEXT NOT NULL,
     tipo_attrezzatura_id TEXT NOT NULL,
     attrezzatura_id TEXT NOT NULL,
     cod_art TEXT NOT NULL,
@@ -246,7 +246,24 @@ export class DatabaseService {
 
     await this.connessione.open();
     await this.connessione.execute(SCHEMA);
+    await this.migraColonnaStatoAStatus();
     await this.persistiSuWeb();
+  }
+
+  /**
+   * I DB creati prima del rename `stato` -> `status` (rda/rds) hanno ancora la vecchia
+   * colonna: `CREATE TABLE IF NOT EXISTS` non altera una tabella già esistente, quindi va
+   * rinominata esplicitamente. Idempotente: non fa nulla se la colonna è già `status`.
+   */
+  private async migraColonnaStatoAStatus(): Promise<void> {
+    if (!this.connessione) return;
+    for (const tabella of ['rda', 'rds']) {
+      const colonne = await this.connessione.query(`PRAGMA table_info(${tabella})`);
+      const haColonnaStato = (colonne.values ?? []).some((c) => (c as SqlRow)['name'] === 'stato');
+      if (haColonnaStato) {
+        await this.connessione.execute(`ALTER TABLE ${tabella} RENAME COLUMN stato TO status`);
+      }
+    }
   }
 
   /**

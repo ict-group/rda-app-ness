@@ -67,7 +67,7 @@ export class KeycloakService {
     const authUrl = this.buildAuthorizeUrl(state, codeChallenge, redirectUri);
 
     if (this.isNative) {
-      await Browser.open({ url: authUrl, presentationStyle: 'popover' });
+      await Browser.open({ url: authUrl });
     } else {
       window.location.href = authUrl;
     }

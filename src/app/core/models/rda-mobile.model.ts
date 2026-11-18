@@ -36,7 +36,7 @@ export interface RdaListItem {
   importo?: number | null;
   dataConsegna: string;
   dataCreazione?: string | null;
-  stato: string;
+  status: string;
   codCantiere?: string | null;
   codGrumer?: string | null;
   codBu?: string | null;
@@ -57,7 +57,7 @@ export interface RdaRowItem {
 export interface RdsListItem {
   uuid: string;
   data: string;
-  stato: string;
+  status: string;
   tipoAttrezzaturaId?: string | null;
   attrezzaturaId?: string | null;
   codArt?: string | null;

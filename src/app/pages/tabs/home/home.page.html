@@ -180,7 +180,7 @@
   } @else if (tabAttivo() === 'rda') {
     @for (rda of rdaService.ultimeRda; track rda.id) {
       <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rda', rda.id]">
-        <div class="side-indicator" [class]="sideClass(rda.stato)"></div>
+        <div class="side-indicator" [class]="sideClass(rda.status)"></div>
         <div class="card-content-compact">
           <div class="top-meta">
             <span class="date-text">{{ rda.data | date: 'dd/MM/yyyy' }}</span>
@@ -198,7 +198,7 @@
               <span class="date-item-value">{{ rda.dataCreazione | date: 'dd/MM/yyyy' }}</span>
             </div>
           </div>
-          <p class="req-status-mini" [class]="statusClass(rda.stato)">{{ statusLabel(rda.stato) }}</p>
+          <p class="req-status-mini" [class]="statusClass(rda.status)">{{ statusLabel(rda.status) }}</p>
           <a
             class="link-ordini"
             [routerLink]="['/tabs/lista-ordini']"
@@ -221,7 +221,7 @@
   } @else {
     @for (rds of rdsService.ultimeRds; track rds.id) {
       <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-rds', rds.id]">
-        <div class="side-indicator" [class]="sideClass(rds.stato)"></div>
+        <div class="side-indicator" [class]="sideClass(rds.status)"></div>
         <div class="card-content-compact">
           <div class="top-meta">
             <span class="date-text">{{ rds.data | date: 'dd/MM/yyyy' }}</span>
@@ -235,7 +235,7 @@
               <span class="date-item-value">{{ rds.data | date: 'dd/MM/yyyy' }}</span>
             </div>
           </div>
-          <p class="req-status-mini" [class]="statusClass(rds.stato)">{{ statusLabel(rds.stato) }}</p>
+          <p class="req-status-mini" [class]="statusClass(rds.status)">{{ statusLabel(rds.status) }}</p>
           <p class="req-status-mini" [class]="rds.statoMezzo === StatoMezzo.Funzionante ? 'approvata' : 'rifiutata'">
             {{ rds.statoMezzo === StatoMezzo.Funzionante ? 'Mezzo funzionante' : 'Mezzo fermo' }}
           </p>

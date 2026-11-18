@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonIcon } from '@ionic/angular';
 import { OrdiniService } from '../../../core/services/ordini.service';
 import { OrdineStatus } from '../../../core/models/ordine.model';
@@ -9,7 +9,7 @@ import { OrdineStatus } from '../../../core/models/ordine.model';
   selector: 'app-lista-ordini',
   templateUrl: 'lista-ordini.page.html',
   styleUrls: ['lista-ordini.page.scss'],
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonIcon, DatePipe],
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonIcon, DatePipe, RouterLink],
 })
 export class ListaOrdiniPage {
   private readonly route = inject(ActivatedRoute);

@@ -4,6 +4,17 @@ export enum OrdineStatus {
   Consegnato = 'CONSEGNATO',
 }
 
+export interface RigaOrdine {
+  id: string;
+  articoloId: string;
+  codice: string;
+  nome: string;
+  um: string;
+  quantita: number;
+  prezzo: number;
+  importo: number;
+}
+
 export interface Ordine {
   id: string;
   rdaId: string;
@@ -11,4 +22,5 @@ export interface Ordine {
   dataConsegna: string;
   stato: OrdineStatus;
   fornitore: string;
+  righe: RigaOrdine[];
 }

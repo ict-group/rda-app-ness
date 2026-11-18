@@ -7,7 +7,7 @@
 <ion-content class="lista-bg">
   <div class="list-wrapper">
     @for (ordine of listaOrdinata; track ordine.id) {
-      <div class="request-card slim-home">
+      <div class="request-card slim-home" [routerLink]="['/tabs/dettaglio-ordine', ordine.id]">
         <div class="side-indicator" [class]="sideClass(ordine.stato)"></div>
         <div class="card-content-compact">
           <div class="top-meta">
@@ -19,6 +19,7 @@
           </div>
           <p class="req-status-mini" [class]="statusClass(ordine.stato)">{{ statusLabel(ordine.stato) }}</p>
         </div>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon-small"></ion-icon>
       </div>
     } @empty {
       <div class="empty-state">
