@@ -34,7 +34,7 @@
     <div class="dettaglio-wrapper">
       <div class="dettaglio-header-card">
         <p class="dettaglio-titolo">{{ rda.descrizione }}</p>
-        <p class="req-status-mini" [class]="statusClass(rda.stato)">{{ statusLabel(rda.stato) }}</p>
+        <p class="req-status-mini" [class]="statusClass(rda.status)">{{ statusLabel(rda.status) }}</p>
       </div>
 
       <div class="dettaglio-info-card">
@@ -75,7 +75,7 @@
             @if (gruppo.budget) {
               <span class="riepilogo-gruppo-budget" [class.negativo]="gruppo.budget.residuo - gruppo.subtotale < 0">
                 Residuo gruppo: {{ gruppo.budget.residuo - gruppo.subtotale | number: '1.2-2' }} € /
-                {{ gruppo.budget.totale | number: '1.0-2' }} €
+                {{ gruppo.budget.totale | number: '1.2-2' }} €
               </span>
             }
           </div>

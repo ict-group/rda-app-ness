@@ -25,7 +25,7 @@ export interface Rda {
   importo: number;
   data: string;
   dataCreazione: string;
-  stato: RdaStatus;
+  status: RdaStatus;
   cantiereId?: string;
   gruppoMerceologicoId?: string;
   businessUnit?: string;

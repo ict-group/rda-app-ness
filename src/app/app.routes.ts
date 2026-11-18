@@ -56,6 +56,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/tabs/lista-ordini/lista-ordini.page').then((m) => m.ListaOrdiniPage),
       },
       {
+        path: 'dettaglio-ordine/:id',
+        loadComponent: () =>
+          import('./pages/tabs/dettaglio-ordine/dettaglio-ordine.page').then((m) => m.DettaglioOrdinePage),
+      },
+      {
         path: 'configurazione',
         loadComponent: () =>
           import('./pages/tabs/configurazione/configurazione.page').then((m) => m.ConfigurazionePage),

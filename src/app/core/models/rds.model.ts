@@ -8,7 +8,7 @@ export enum StatoMezzo {
 export interface Rds {
   id: string;
   data: string;
-  stato: RdaStatus;
+  status: RdaStatus;
   tipoAttrezzaturaId: string;
   attrezzaturaId: string;
   codArt: string;

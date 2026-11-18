@@ -1,0 +1,79 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/lista-ordini" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Dettaglio ordine</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dettaglio-bg">
+  @if (ordine(); as ordine) {
+    <div class="dettaglio-wrapper">
+      <div class="dettaglio-header-card">
+        <p class="dettaglio-titolo">{{ ordine.fornitore }}</p>
+        <p class="req-status-mini" [class]="statusClass(ordine.stato)">{{ statusLabel(ordine.stato) }}</p>
+      </div>
+
+      <div class="dettaglio-info-card">
+        <div class="info-row">
+          <span class="info-label">Data ordine</span>
+          <span class="info-value">{{ ordine.dataOrdine | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Data consegna</span>
+          <span class="info-value">{{ ordine.dataConsegna | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Importo totale</span>
+          <span class="info-value">{{ totale() | number: '1.2-2' }} €</span>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span>Articoli</span>
+      </div>
+
+      <div class="articoli-table-wrapper">
+        <table class="articoli-table">
+          <thead>
+            <tr>
+              <th>Articolo</th>
+              <th class="col-descrizione">Descrizione</th>
+              <th>Quantità</th>
+              <th>UM</th>
+              <th>Prezzo</th>
+              <th>Importo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (riga of ordine.righe; track riga.id) {
+              <tr>
+                <td data-label="Articolo" class="col-articolo">
+                  <span class="codice">{{ riga.codice }}</span>
+                  <span class="descrizione-mobile">{{ riga.nome }}</span>
+                </td>
+                <td data-label="Descrizione" class="col-descrizione">{{ riga.nome }}</td>
+                <td data-label="Quantità">{{ riga.quantita }}</td>
+                <td data-label="UM">{{ riga.um }}</td>
+                <td data-label="Prezzo">{{ riga.prezzo | number: '1.2-2' }}</td>
+                <td data-label="Importo">{{ riga.importo | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cta-wrapper">
+        <ion-button expand="block" class="btn-ordini" [routerLink]="['/tabs/dettaglio-rda', ordine.rdaId]">
+          Vedi RDA collegata
+        </ion-button>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h3>Ordine non trovato</h3>
+    </div>
+  }
+</ion-content>

@@ -101,7 +101,7 @@ export class RdaService {
       importo: Number(r['importo']),
       data: r['data'] as string,
       dataCreazione: r['data_creazione'] as string,
-      stato: r['stato'] as RdaStatus,
+      status: r['status'] as RdaStatus,
       cantiereId: (r['cantiere_id'] as string | null) ?? undefined,
       gruppoMerceologicoId: (r['gruppo_merceologico_id'] as string | null) ?? undefined,
       businessUnit: (r['business_unit'] as string | null) ?? undefined,
@@ -210,7 +210,7 @@ export class RdaService {
       importo: r.importo ?? 0,
       data: r.dataConsegna,
       dataCreazione: r.dataCreazione ?? r.dataConsegna,
-      stato: r.stato as RdaStatus,
+      status: r.status as RdaStatus,
       cantiereId: r.codCantiere ?? undefined,
       gruppoMerceologicoId: r.codGrumer ?? undefined,
       businessUnit: r.codBu ?? undefined,
@@ -226,7 +226,7 @@ export class RdaService {
       importo: input.righe.reduce((totale, riga) => totale + riga.importo, 0),
       data: input.dataConsegna,
       dataCreazione: new Date().toISOString(),
-      stato: RdaStatus.Creato,
+      status: RdaStatus.Creato,
       cantiereId: input.cantiereId,
       gruppoMerceologicoId: input.gruppoMerceologicoId,
       businessUnit: input.businessUnit,
@@ -257,10 +257,10 @@ export class RdaService {
     if (inviataConSuccesso) {
       if (this.impostazioni.modalitaOffline()) {
         // Se era rimasta in coda come "Da Inviare" da un tentativo precedente, torna a uno stato normale.
-        const statoFinale = rda.stato === RdaStatus.DaInviare ? RdaStatus.Creato : rda.stato;
-        await this.db.run('UPDATE rda SET sincronizzato = 1, stato = ? WHERE id = ?', [statoFinale, rda.id]);
+        const statoFinale = rda.status === RdaStatus.DaInviare ? RdaStatus.Creato : rda.status;
+        await this.db.run('UPDATE rda SET sincronizzato = 1, status = ? WHERE id = ?', [statoFinale, rda.id]);
         this.listaRda.update((lista) =>
-          lista.map((r) => (r.id === rda.id ? { ...r, sincronizzato: true, stato: statoFinale } : r)),
+          lista.map((r) => (r.id === rda.id ? { ...r, sincronizzato: true, status: statoFinale } : r)),
         );
       } else {
         // Online: la tabella locale contiene solo le richieste non ancora inviate (vedi `caricaLista`),
@@ -312,9 +312,9 @@ export class RdaService {
   }
 
   private async segnaDaInviare(id: string): Promise<void> {
-    await this.db.run('UPDATE rda SET sincronizzato = 0, stato = ? WHERE id = ?', [RdaStatus.DaInviare, id]);
+    await this.db.run('UPDATE rda SET sincronizzato = 0, status = ? WHERE id = ?', [RdaStatus.DaInviare, id]);
     this.listaRda.update((lista) =>
-      lista.map((r) => (r.id === id ? { ...r, sincronizzato: false, stato: RdaStatus.DaInviare } : r)),
+      lista.map((r) => (r.id === id ? { ...r, sincronizzato: false, status: RdaStatus.DaInviare } : r)),
     );
   }
 
@@ -342,7 +342,7 @@ export class RdaService {
         importo: righe1.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(4),
         dataCreazione: giorniFa(1),
-        stato: RdaStatus.Creato,
+        status: RdaStatus.Creato,
         cantiereId: '1',
         gruppoMerceologicoId: '1',
         businessUnit: 'Pulizie',
@@ -355,7 +355,7 @@ export class RdaService {
         importo: righe2.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(2),
         dataCreazione: giorniFa(2),
-        stato: RdaStatus.InAttesa,
+        status: RdaStatus.InAttesa,
         cantiereId: '1',
         gruppoMerceologicoId: '2',
         businessUnit: 'Pulizie',
@@ -368,7 +368,7 @@ export class RdaService {
         importo: righe3.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(7),
         dataCreazione: giorniFa(3),
-        stato: RdaStatus.Approvata,
+        status: RdaStatus.Approvata,
         cantiereId: '1',
         gruppoMerceologicoId: '2',
         businessUnit: 'Giardinaggio',
@@ -381,7 +381,7 @@ export class RdaService {
         importo: righe4.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(10),
         dataCreazione: giorniFa(4),
-        stato: RdaStatus.Rifiutata,
+        status: RdaStatus.Rifiutata,
         cantiereId: '1',
         gruppoMerceologicoId: '1',
         businessUnit: 'Derattizzazione',
@@ -394,7 +394,7 @@ export class RdaService {
         importo: righe5.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(1),
         dataCreazione: giorniFa(5),
-        stato: RdaStatus.Creato,
+        status: RdaStatus.Creato,
         cantiereId: '1',
         gruppoMerceologicoId: '2',
         businessUnit: 'Pulizie',
@@ -407,7 +407,7 @@ export class RdaService {
         importo: righe6.reduce((t, r) => t + r.importo, 0),
         data: dataConsegnaTraGiorni(6),
         dataCreazione: giorniFa(6),
-        stato: RdaStatus.Approvata,
+        status: RdaStatus.Approvata,
         cantiereId: '1',
         gruppoMerceologicoId: '1',
         businessUnit: 'Giardinaggio',
@@ -426,7 +426,7 @@ export class RdaService {
 
   private async salvaSuDb(rda: Rda): Promise<void> {
     await this.db.run(
-      `INSERT INTO rda (id, descrizione, importo, data, data_creazione, stato, cantiere_id, gruppo_merceologico_id, business_unit, sincronizzato)
+      `INSERT INTO rda (id, descrizione, importo, data, data_creazione, status, cantiere_id, gruppo_merceologico_id, business_unit, sincronizzato)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         rda.id,
@@ -434,7 +434,7 @@ export class RdaService {
         rda.importo,
         rda.data,
         rda.dataCreazione,
-        rda.stato,
+        rda.status,
         rda.cantiereId ?? null,
         rda.gruppoMerceologicoId ?? null,
         rda.businessUnit ?? null,

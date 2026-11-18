@@ -50,7 +50,7 @@ export class RdsService {
     const lista: Rds[] = righeRds.map((r) => ({
       id: r['id'] as string,
       data: r['data'] as string,
-      stato: r['stato'] as RdaStatus,
+      status: r['status'] as RdaStatus,
       tipoAttrezzaturaId: r['tipo_attrezzatura_id'] as string,
       attrezzaturaId: r['attrezzatura_id'] as string,
       codArt: r['cod_art'] as string,
@@ -143,7 +143,7 @@ export class RdsService {
     return {
       id: r.uuid,
       data: r.data,
-      stato: r.stato as RdaStatus,
+      status: r.status as RdaStatus,
       tipoAttrezzaturaId: r.tipoAttrezzaturaId ?? '',
       attrezzaturaId: r.attrezzaturaId ?? '',
       codArt: r.codArt ?? '',
@@ -160,7 +160,7 @@ export class RdsService {
     const nuova: Rds = {
       id: crypto.randomUUID(),
       data: new Date().toISOString(),
-      stato: RdaStatus.Creato,
+      status: RdaStatus.Creato,
       tipoAttrezzaturaId: input.tipoAttrezzaturaId,
       attrezzaturaId: input.attrezzaturaId,
       codArt: input.codArt,
@@ -179,7 +179,7 @@ export class RdsService {
 
   /**
    * Tenta l'invio della RDS al backend se online, altrimenti la lascia in coda (sincronizzato = false,
-   * stato = DaInviare). Lo stato "Da Inviare" compare SOLO quando l'invio non è andato a buon fine
+   * status = DaInviare). Lo status "Da Inviare" compare SOLO quando l'invio non è andato a buon fine
    * (offline o fallito): è quello il segnale che la richiesta è ancora solo salvata localmente.
    * Da richiamare dopo `creaRds`, e anche da "Invia tutto" per ogni RDS non ancora sincronizzata.
    */
@@ -194,10 +194,10 @@ export class RdsService {
 
     if (inviataConSuccesso) {
       if (this.impostazioni.modalitaOffline()) {
-        const statoFinale = rds.stato === RdaStatus.DaInviare ? RdaStatus.Creato : rds.stato;
-        await this.db.run('UPDATE rds SET sincronizzato = 1, stato = ? WHERE id = ?', [statoFinale, rds.id]);
+        const statoFinale = rds.status === RdaStatus.DaInviare ? RdaStatus.Creato : rds.status;
+        await this.db.run('UPDATE rds SET sincronizzato = 1, status = ? WHERE id = ?', [statoFinale, rds.id]);
         this.listaRds.update((lista) =>
-          lista.map((r) => (r.id === rds.id ? { ...r, sincronizzato: true, stato: statoFinale } : r)),
+          lista.map((r) => (r.id === rds.id ? { ...r, sincronizzato: true, status: statoFinale } : r)),
         );
       } else {
         // Online: la tabella locale contiene solo le richieste non ancora inviate (vedi `caricaLista`),
@@ -232,9 +232,9 @@ export class RdsService {
   }
 
   private async segnaDaInviare(id: string): Promise<void> {
-    await this.db.run('UPDATE rds SET sincronizzato = 0, stato = ? WHERE id = ?', [RdaStatus.DaInviare, id]);
+    await this.db.run('UPDATE rds SET sincronizzato = 0, status = ? WHERE id = ?', [RdaStatus.DaInviare, id]);
     this.listaRds.update((lista) =>
-      lista.map((r) => (r.id === id ? { ...r, sincronizzato: false, stato: RdaStatus.DaInviare } : r)),
+      lista.map((r) => (r.id === id ? { ...r, sincronizzato: false, status: RdaStatus.DaInviare } : r)),
     );
   }
 
@@ -243,7 +243,7 @@ export class RdsService {
       {
         id: crypto.randomUUID(),
         data: giorniFa(0),
-        stato: RdaStatus.Creato,
+        status: RdaStatus.Creato,
         tipoAttrezzaturaId: '1',
         attrezzaturaId: '1',
         codArt: 'DEC-001',
@@ -257,7 +257,7 @@ export class RdsService {
       {
         id: crypto.randomUUID(),
         data: giorniFa(1),
-        stato: RdaStatus.InAttesa,
+        status: RdaStatus.InAttesa,
         tipoAttrezzaturaId: '2',
         attrezzaturaId: '3',
         codArt: 'RAS-001',
@@ -271,7 +271,7 @@ export class RdsService {
       {
         id: crypto.randomUUID(),
         data: giorniFa(3),
-        stato: RdaStatus.Approvata,
+        status: RdaStatus.Approvata,
         tipoAttrezzaturaId: '3',
         attrezzaturaId: '5',
         codArt: 'SPZ-001',
@@ -285,7 +285,7 @@ export class RdsService {
       {
         id: crypto.randomUUID(),
         data: giorniFa(5),
-        stato: RdaStatus.Rifiutata,
+        status: RdaStatus.Rifiutata,
         tipoAttrezzaturaId: '1',
         attrezzaturaId: '2',
         codArt: 'DEC-002',
@@ -307,12 +307,12 @@ export class RdsService {
 
   private async salvaSuDb(rds: Rds): Promise<void> {
     await this.db.run(
-      `INSERT INTO rds (id, data, stato, tipo_attrezzatura_id, attrezzatura_id, cod_art, note, orari_accesso, rif_cliente, telefono, stato_mezzo, sincronizzato)
+      `INSERT INTO rds (id, data, status, tipo_attrezzatura_id, attrezzatura_id, cod_art, note, orari_accesso, rif_cliente, telefono, stato_mezzo, sincronizzato)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         rds.id,
         rds.data,
-        rds.stato,
+        rds.status,
         rds.tipoAttrezzaturaId,
         rds.attrezzaturaId,
         rds.codArt,

@@ -4,9 +4,15 @@ const config: CapacitorConfig = {
   appId: 'it.ictgroup.rda.app',
   appName: 'Eggs-rda',
   webDir: 'www',
-  plugins: {
-    CapacitorHttp: {
-      enabled: true,
+  experimental: {
+    ios: {
+      spm: {
+        packageOptions: {
+          '@capacitor-firebase/messaging': {
+            symlink: true,
+          },
+        },
+      },
     },
   },
 };
